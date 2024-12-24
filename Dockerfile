@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Install Camoufox with the geoip option
-RUN pip install --no-cache-dir camoufox[geoip]
+RUN pip install --no-cache-dir camoufox[geoip] fastapi uvicorn
 
 # Fetch the latest Camoufox browser
 RUN python -m camoufox fetch
