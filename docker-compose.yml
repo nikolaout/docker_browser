@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  camoufox-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '34091:34091'
+      - '9090:9090'
+    environment:
+      - DISPLAY=:99
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
