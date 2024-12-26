@@ -11,6 +11,7 @@ class BrowserSession:
     def __init__(self):
         self.current_session: Optional[dict] = None
         self.ws_endpoint: Optional[str] = None
+        self.SESSION_TIMEOUT = 300  # 5 minutes timeout
 
     def set_session(self, ws_endpoint: str) -> dict:
         self.ws_endpoint = ws_endpoint
@@ -22,12 +23,22 @@ class BrowserSession:
         return self.current_session
 
     def get_session(self) -> Optional[dict]:
+        if self.current_session and self._is_session_expired():
+            self.clear_session()
+            return None
         return self.current_session
 
+    def _is_session_expired(self) -> bool:
+        if not self.current_session:
+            return True
+        return (time.time() - self.current_session["last_active"]) > self.SESSION_TIMEOUT
+
     def update_session(self) -> bool:
-        if self.current_session:
+        if self.current_session and not self._is_session_expired():
             self.current_session["last_active"] = time.time()
             return True
+        if self.current_session:
+            self.clear_session()
         return False
 
     def clear_session(self):
